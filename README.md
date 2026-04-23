@@ -130,6 +130,94 @@ Access ArgoCD on EC2 (example):
 kubectl -n argocd port-forward svc/argocd-server 8080:443
 ```
 
+From your laptop, open an SSH tunnel to the EC2 host:
+
+```bash
+ssh -i /path/to/your-key.pem -L 8080:localhost:8080 ubuntu@<EC2_PUBLIC_IP>
+```
+
+Then open ArgoCD in your browser:
+
+```text
+https://localhost:8080
+```
+
+Get the initial ArgoCD admin password:
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+ArgoCD username:
+
+```text
+admin
+```
+
+## 7. Run APIs on EC2 / kind Cluster
+
+After Ansible and ArgoCD are done, test the services on the EC2 host.
+
+Auth service health check:
+
+```bash
+curl http://localhost:30081/health
+```
+
+Issue service health check:
+
+```bash
+curl http://localhost:30080/health
+```
+
+Notification service health check:
+
+```bash
+kubectl -n community-issues port-forward svc/notification-service 8003:8000
+```
+
+Then in another terminal:
+
+```bash
+curl http://localhost:8003/health
+```
+
+Example API flow on EC2:
+
+```bash
+curl -X POST http://localhost:30081/users/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"ali","email":"ali@example.com","password":"secret123"}'
+```
+
+Use the returned `user_id` in the issue service:
+
+```bash
+curl -X POST http://localhost:30080/issues \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Broken street light","description":"The street light near gate 2 is not working.","reporter_id":"USER_ID_HERE"}'
+```
+
+Check generated notifications:
+
+```bash
+curl "http://localhost:8003/notifications?user_id=USER_ID_HERE"
+```
+
+If you see connection refused on 30080 or 30081:
+
+```bash
+kubectl -n community-issues get pods,svc,endpoints
+docker ps --format '{{.Names}} {{.Ports}}' | grep control-plane
+```
+
+If the control-plane container does not show host mappings for 30080 and 30081, rerun Ansible to recreate kind with the required mappings:
+
+```bash
+cd automation/ansible
+ansible-playbook -i inventories/hosts.ini playbooks/site.yml
+```
+
 ## Minimal API Flow Example
 
 1. Register user:
