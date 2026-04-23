@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: docker.io/your-dockerhub-username/notification-service:latest
+          image: docker.io/22i1167x/notification-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000

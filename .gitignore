@@ -21,3 +21,5 @@ Thumbs.db
 
 # Secrets
 .env
+
+hosts.ini

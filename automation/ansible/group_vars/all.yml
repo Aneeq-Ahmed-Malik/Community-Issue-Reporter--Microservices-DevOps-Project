@@ -3,6 +3,6 @@ target_user: ubuntu
 kind_cluster_name: community-cluster
 argocd_namespace: argocd
 argocd_app_namespace: community-issues
-repo_url: https://github.com/your-org/your-repo.git
+repo_url: https://github.com/Aneeq-Ahmed-Malik/Community-Issue-Reporter--Microservices-DevOps-Project
 repo_branch: main
 repo_path: k8s

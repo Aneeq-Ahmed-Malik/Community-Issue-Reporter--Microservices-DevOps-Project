@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: docker.io/your-dockerhub-username/auth-service:latest
+          image: docker.io/22i1167x/auth-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000

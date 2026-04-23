@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: issue-service
-          image: docker.io/your-dockerhub-username/issue-service:latest
+          image: docker.io/22i1167x/issue-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
