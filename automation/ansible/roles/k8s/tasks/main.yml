@@ -41,7 +41,7 @@
 
 - name: Install ArgoCD
   become_user: "{{ target_user }}"
-  ansible.builtin.command: kubectl apply -n {{ argocd_namespace }} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  ansible.builtin.command: kubectl apply --server-side --force-conflicts -n {{ argocd_namespace }} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
   register: argocd_install
   changed_when: "'created' in argocd_install.stdout or 'configured' in argocd_install.stdout"
 

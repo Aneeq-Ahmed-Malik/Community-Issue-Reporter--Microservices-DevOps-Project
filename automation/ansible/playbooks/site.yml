@@ -2,6 +2,8 @@
 - name: Configure Kubernetes host and ArgoCD
   hosts: cluster
   become: true
+  vars_files:
+    - ../group_vars/all.yml
   roles:
     - common
     - k8s

@@ -82,7 +82,8 @@ After apply, note outputs:
 
 ```bash
 cd automation/ansible
-ansible-playbook playbooks/site.yml
+export ANSIBLE_ROLES_PATH="$PWD/roles"
+ansible-playbook -i inventories/hosts.ini playbooks/site.yml
 ```
 
 ## 4. Kubernetes Deployment

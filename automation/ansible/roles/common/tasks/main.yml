@@ -25,3 +25,6 @@
     name: "{{ target_user }}"
     groups: docker
     append: true
+
+- name: Reconnect so docker group membership takes effect
+  ansible.builtin.meta: reset_connection
