@@ -1,0 +1,7 @@
+---
+- name: Configure Kubernetes host and ArgoCD
+  hosts: cluster
+  become: true
+  roles:
+    - common
+    - k8s

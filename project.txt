@@ -1,0 +1,42 @@
+Overview
+In this project, you will be architecting a complete deployment pipeline. You are tasked with
+taking a microservices-based codebase and deploying it onto an AWS EC2 instance using
+industry-standard tools for Infrastructure as Code (IaC), configuration management,
+containerization, and Continuous Deployment (CD).
+Project Goal
+The objective is to deploy a codebase on an Amazon EC2 instance such that the application is
+fully functional and accessible to external users.
+You can use any of your own projects or publicly available repositories for the codebase.
+Required Artifacts & Methodology
+Your submission must include the following components, organized by their role in the
+deployment flow:
+1. Containerization (Docker)
+● Dockerfile: You must write a unique Dockerfile for every microservice in the provided
+codebase to enable automated image building.
+2. Infrastructure as Code (Terraform)
+● AWS Provisioning: Use Terraform to set up the target EC2 instance within your AWS
+account.
+● Networking & Security: Include necessary supporting resources, such as a VPC and
+Security Groups, to ensure secure connectivity.
+3. Configuration as Code (Ansible)
+● Node Setup: Create Ansible playbooks to configure the provisioned EC2 instance.
+● Cluster Initialization: The configuration must prepare the machine to run a local
+Kubernetes cluster (e.g., microk8s or kind).
+4. Cluster (Kubernetes Manifests)
+● Resource Definitions: For every microservice, write Kubernetes Service and
+Deployment manifests.
+● Integration: Ensure your deployment manifests are configured to utilize the Docker
+images created in Step 1.
+5. CI/CD Pipeline (GitHub Actions & ArgoCD)
+
+● CI Workflow: Implement a GitHub Workflow that triggers on codebase changes to
+rebuild Docker images and update the Kubernetes manifests with the new image tags.
+● CD Synchronization: Configure ArgoCD to monitor your repository and automatically
+sync the Kubernetes cluster with the updated manifests.
+Deliverables
+1. Source Code: A repository containing all application code, Dockerfiles, and Kubernetes
+YAML files.
+2. Infrastructure Code: Your .tf (Terraform) and .yml (Ansible) files.
+3. CI/CD Config: The GitHub Actions workflow file (.github/workflows/) and ArgoCD
+application configuration.
+4. Documentation: A brief README explaining all the deployment steps.

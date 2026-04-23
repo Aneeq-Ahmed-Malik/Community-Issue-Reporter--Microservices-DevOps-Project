@@ -1,0 +1,63 @@
+---
+- name: Install kubectl
+  ansible.builtin.get_url:
+    url: https://dl.k8s.io/release/v1.30.2/bin/linux/amd64/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: "0755"
+
+- name: Install kind
+  ansible.builtin.get_url:
+    url: https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
+    dest: /usr/local/bin/kind
+    mode: "0755"
+
+- name: Ensure kube directory exists
+  ansible.builtin.file:
+    path: "/home/{{ target_user }}/.kube"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Check existing kind clusters
+  become_user: "{{ target_user }}"
+  ansible.builtin.command: kind get clusters
+  register: kind_clusters
+  changed_when: false
+  failed_when: false
+
+- name: Create kind cluster
+  become_user: "{{ target_user }}"
+  ansible.builtin.command: "kind create cluster --name {{ kind_cluster_name }} --wait 120s"
+  when: kind_cluster_name not in kind_clusters.stdout_lines
+
+- name: Ensure ArgoCD namespace exists
+  become_user: "{{ target_user }}"
+  ansible.builtin.shell: |
+    kubectl create namespace {{ argocd_namespace }} --dry-run=client -o yaml | kubectl apply -f -
+  args:
+    executable: /bin/bash
+  changed_when: false
+
+- name: Install ArgoCD
+  become_user: "{{ target_user }}"
+  ansible.builtin.command: kubectl apply -n {{ argocd_namespace }} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  register: argocd_install
+  changed_when: "'created' in argocd_install.stdout or 'configured' in argocd_install.stdout"
+
+- name: Wait for ArgoCD server deployment rollout
+  become_user: "{{ target_user }}"
+  ansible.builtin.command: kubectl rollout status deployment/argocd-server -n {{ argocd_namespace }} --timeout=300s
+  changed_when: false
+
+- name: Render ArgoCD application manifest
+  ansible.builtin.template:
+    src: argocd-app.yml.j2
+    dest: /tmp/argocd-app.yml
+    mode: "0644"
+
+- name: Apply ArgoCD application
+  become_user: "{{ target_user }}"
+  ansible.builtin.command: kubectl apply -f /tmp/argocd-app.yml
+  register: app_apply
+  changed_when: "'created' in app_apply.stdout or 'configured' in app_apply.stdout"

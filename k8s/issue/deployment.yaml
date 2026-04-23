@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: issue-service
+  namespace: community-issues
+  labels:
+    app: issue-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: issue-service
+  template:
+    metadata:
+      labels:
+        app: issue-service
+    spec:
+      containers:
+        - name: issue-service
+          image: docker.io/your-dockerhub-username/issue-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: issue-service-config
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
