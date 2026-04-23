@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: docker.io/22i1167x/auth-service:98a6389161d0da85885cc7f40bb7902f338c6e0b
+          image: docker.io/22i1167x/auth-service:13e7541f8d5864a1e4f5b10da36319fd6b84143f
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
